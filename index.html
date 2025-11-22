@@ -208,3 +208,327 @@
       box-shadow:none;
     }
 
+    .notice{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      font-size:.95rem;
+      font-weight:700;
+    }
+    .notice.good{background:#e6f7e6; border:1px solid #a3e0a3; color:#186b2c;}
+    .notice.warn{background:#ffe6e6; border:1px solid #f0bcbc; color:#8b1a1a;}
+    .loading{
+      color:var(--muted);
+      font-style:italic;
+      text-align:center;
+      padding:30px;
+    }
+
+    footer{
+      text-align:center;
+      padding:30px 16px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .spinner{
+      display:inline-block;
+      width:16px;
+      height:16px;
+      border:2px solid #fff;
+      border-top-color:transparent;
+      border-radius:50%;
+      animation:spin 0.8s linear infinite;
+      margin-right:8px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+  <section class="hero" role="banner">
+    <div class="hero-inner">
+      <h1>Thanksgiving Potluck</h1>
+      <p>Let’s give thanks together. Pick a dish or add your own!</p>
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- Live List -->
+    <section class="card" aria-labelledby="list-title">
+      <h2 id="list-title">What We’ve Got So Far</h2>
+      <div id="listArea" class="loading">Loading the feast...</div>
+    </section>
+
+    <!-- Signup Form -->
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title">Claim Your Dish</h2>
+
+      <form id="signupForm" novalidate>
+        <label for="name">Your Name</label>
+        <input id="name" type="text" required placeholder="e.g., Aunt Linda" autocomplete="name"/>
+
+        <div class="row">
+          <div>
+            <label for="categorySelect">Category</label>
+            <select id="categorySelect" required></select>
+          </div>
+          <div>
+            <label for="itemSelect">Dish</label>
+            <select id="itemSelect" required></select>
+          </div>
+        </div>
+
+        <label for="quantity">Serving Size <span class="muted">(optional)</span></label>
+        <input id="quantity" placeholder="e.g., feeds 8, 1 large tray, 2 pies"/>
+
+        <label for="notes">Notes <span class="muted">(optional)</span></label>
+        <textarea id="notes" placeholder="e.g., gluten-free, extra spicy, homemade crust"></textarea>
+
+        <button type="submit" class="btn" id="submitBtn">
+          <span class="btn-text">I’ll Bring This!</span>
+        </button>
+        <div id="status" aria-live="polite"></div>
+      </form>
+
+      <hr style="margin:30px 0; border:none; height:1px; background:rgba(99,63,33,.15);"/>
+
+      <h2 style="font-size:1.3rem;">Don’t See Your Dish?</h2>
+      <p class="muted">Add it below — we love surprises!</p>
+
+      <form id="addItemForm" novalidate>
+        <div class="row">
+          <div>
+            <label for="addCategoryExisting">Existing Category</label>
+            <select id="addCategoryExisting"><option value="">Choose or type new →</option></select>
+          </div>
+          <div>
+            <label for="addCategoryNew">Or New Category</label>
+            <input id="addCategoryNew" placeholder="e.g., Vegan Options"/>
+          </div>
+        </div>
+
+        <label for="addItemName">Dish Name</label>
+        <input id="addItemName" required placeholder="e.g., Vegan Mushroom Wellington"/>
+
+        <label for="addItemNotes">Notes <span class="muted">(optional)</span></label>
+        <input id="addItemNotes" placeholder="e.g., nut-free, serves 10"/>
+
+        <button type="submit" class="btn secondary" id="addItemBtn">Add to List</button>
+        <div id="addItemStatus" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    “Gratitude turns what we have into enough.” — Anonymous
+  </footer>
+
+<script>
+  // REPLACE THIS WITH YOUR ACTUAL GOOGLE APPS SCRIPT WEB APP URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx.../exec";   // ← PUT YOUR URL HERE
+
+  if (SCRIPT_URL.includes("AKfycbx") || SCRIPT_URL.includes("PASTE")) {
+    alert("Please paste your Google Apps Script Web App URL into the SCRIPT_URL variable!");
+  }
+
+  const listArea = document.getElementById('listArea');
+  const categorySelect = document.getElementById('categorySelect');
+  const itemSelect = document.getElementById('itemSelect');
+  const addCategoryExisting = document.getElementById('addCategoryExisting');
+  const submitBtn = document.getElementById('submitBtn');
+  const addItemBtn = document.getElementById('addItemBtn');
+
+  let dataCache = { categories: {}, signups: [] };
+
+  function setStatus(el, msg, type = "muted") {
+    el.innerHTML = `<div class="notice ${type}">${msg}</div>`;
+  }
+  function clearStatus(el) { el.innerHTML = ""; }
+
+  function showLoading(btn) {
+    const text = btn.querySelector('.btn-text') || btn;
+    btn.disabled = true;
+    text.innerHTML = '<span class="spinner"></span> Saving...';
+  }
+  function hideLoading(btn, text) {
+    btn.disabled = false;
+    const txtEl = btn.querySelector('.btn-text') || btn;
+    txtEl.textContent = text;
+  }
+
+  async function fetchData() {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=list`);
+      if (!res.ok) throw new Error("Server error");
+      const json = await res.json();
+      dataCache = json;
+      renderList(json);
+      populateSelectors(json);
+    } catch (err) {
+      listArea.innerHTML = `<div class="notice warn">Could not load list. Check your internet or the script URL.</div>`;
+    }
+  }
+
+  function renderList({ categories, signups }) {
+    if (!categories || Object.keys(categories).length === 0) {
+      listArea.innerHTML = `<div class="notice warn">No dishes yet — be the first!</div>`;
+      return;
+    }
+
+    const claimed = {};
+    (signups || []).forEach(s => {
+      const key = `${s.category}||${s.item}`;
+      claimed[key] = claimed[key] || [];
+      claimed[key].push(s.name + (s.quantity ? ` (${s.quantity})` : ""));
+    });
+
+    let html = "";
+    Object.keys(categories).sort().forEach(cat => {
+      const items = categories[cat] || [];
+      html += `
+        <div class="category">
+          <h3>${cat} <span class="pill">${items.length}</span></h3>
+          <ul class="items">
+            ${items.map(it => {
+              const key = `${cat}||${it.name}`;
+              const takers = claimed[key] || [];
+              const badge = takers.length
+                ? `<span class="claimed">${takers.join(", ")}</span>`
+                : `<span class="unclaimed">Available</span>`;
+              return `
+                <li class="item-row">
+                  <div>
+                    <strong>${it.name}</strong>
+                    ${it.notes ? `<br><small>${it.notes}</small>` : ""}
+                  </div>
+                  ${badge}
+                </li>`;
+            }).join("")}
+          </ul>
+        </div>`;
+    });
+    listArea.innerHTML = html;
+  }
+
+  function populateSelectors({ categories, signups }) {
+    const cats = Object.keys(categories).sort();
+
+    const claimedMap = {};
+    (signups || []).forEach(s => {
+      const key = `${s.category}||${s.item}`;
+      claimedMap[key] = (claimedMap[key] || 0) + 1;
+    });
+
+    // Category selects
+    const catOptions = cats.map(c => `<option value="${c}">${c}</option>`).join("");
+    categorySelect.innerHTML = catOptions;
+    addCategoryExisting.innerHTML = `<option value="">Choose existing</option>` + catOptions;
+
+    // Items — show taken status
+    function updateItems() {
+      const cat = categorySelect.value;
+      const items = categories[cat] || [];
+      itemSelect.innerHTML = items.map(it => {
+        const key = `${cat}||${it.name}`;
+        const taken = claimedMap[key] || 0;
+        const suffix = taken ? ` — Taken${taken > 1 ? ` (${taken})` : ""}` : "";
+        return `<option value="${it.name}">${it.name}${suffix}</option>`;
+      }).join("") || `<option>(No items in this category)</option>`;
+    }
+    categorySelect.addEventListener("change", updateItems);
+    updateItems();
+  }
+
+  // Signup form
+  document.getElementById("signupForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    clearStatus(document.getElementById("status"));
+    showLoading(submitBtn);
+
+    const payload = {
+      action: "signup",
+      name: document.getElementById("name").value.trim(),
+      category: categorySelect.value,
+      item: itemSelect.value,
+      quantity: document.getElementById("quantity").value.trim(),
+      notes: document.getElementById("notes").value.trim()
+    };
+
+    if (!payload.name || !payload.category || !payload.item) {
+      setStatus(document.getElementById("status"), "Please fill name and select a dish.", "warn");
+      hideLoading(submitBtn, "I’ll Bring This!");
+      return;
+    }
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(payload)
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setStatus(document.getElementById("status"), "You’re all set! Thank you!", "good");
+        e.target.reset();
+        await fetchData();
+      } else {
+        setStatus(document.getElementById("status"), json.error || "Something went wrong.", "warn");
+      }
+    } catch (err) {
+      setStatus(document.getElementById("status"), "Connection failed. Try again.", "warn");
+    } finally {
+      hideLoading(submitBtn, "I’ll Bring This!");
+    }
+  });
+
+  // Add new item
+  document.getElementById("addItemForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    clearStatus(document.getElementById("addItemStatus"));
+    addItemBtn.disabled = true;
+    addItemBtn.textContent = "Adding...";
+
+    const existingCat = addCategoryExisting.value;
+    const newCat = document.getElementById("addCategoryNew").value.trim();
+    const category = newCat || existingCat;
+    const item = document.getElementById("addItemName").value.trim();
+    const notes = document.getElementById("addItemNotes").value.trim();
+
+    if (!category || !item) {
+      setStatus(document.getElementById("addItemStatus"), "Category and dish name required.", "warn");
+      addItemBtn.disabled = false;
+      addItemBtn.textContent = "Add to List";
+      return;
+    }
+
+    const payload = { action: "addItem", category, item, notes };
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(payload)
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setStatus(document.getElementById("addItemStatus"), `"${item}" added!`, "good");
+        e.target.reset();
+        await fetchData();
+        categorySelect.value = category;
+        categorySelect.dispatchEvent(new Event("change"));
+      } else {
+        setStatus(document.getElementById("addItemStatus"), json.error || "Failed to add.", "warn");
+      }
+    } catch (err) {
+      setStatus(document.getElementById("addItemStatus"), "Connection failed.", "warn");
+    } finally {
+      addItemBtn.disabled = false;
+      addItemBtn.textContent = "Add to List";
+    }
+  });
+
+  // Initial load
+  fetchData();
+</script>
+</body>
+</html>
