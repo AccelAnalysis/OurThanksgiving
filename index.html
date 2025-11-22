@@ -4,196 +4,280 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Thanksgiving Potluck Signup</title>
+
+  <!-- Cozy Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#0f1115;
-      --card:#171a21;
-      --muted:#9aa3b2;
-      --text:#eef1f6;
-      --accent:#ffb454;
-      --accent2:#7bdff2;
-      --good:#5ad67d;
-      --warn:#ff7a7a;
-      --radius:14px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      font-synthesis: style weight;
+      /* Thanksgiving palette */
+      --cranberry:#9c2f2f;
+      --pumpkin:#f56004;
+      --gold:#dbba33;
+      --warm-brown:#633f21;
+      --deep-brown:#2a1710;
+      --cream:#fff7ea;
+
+      --card:#ffffff;
+      --text:#22130d;
+      --muted:#6a564f;
+
+      --radius:18px;
+      --shadow:0 12px 30px rgba(34,19,13,.18);
     }
+
     *{box-sizing:border-box}
     body{
-      margin:0; background:radial-gradient(1200px 800px at 10% -10%, #202536 0%, var(--bg) 60%);
-      color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      margin:0;
+      font-family:Nunito, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 600px at 10% -10%, #ffe8c6 0%, transparent 60%),
+        radial-gradient(900px 600px at 110% -20%, #ffe0e0 0%, transparent 62%),
+        linear-gradient(#fff4de, #fff1e3);
     }
-    header{
-      padding:28px 18px 12px; text-align:center;
+
+    /* Hero */
+    .hero{
+      position:relative;
+      min-height:42vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:28px 16px;
+      background:
+        linear-gradient( to bottom, rgba(0,0,0,.35), rgba(0,0,0,.35) ),
+        url("https://source.unsplash.com/featured/?thanksgiving,table,fall") center/cover no-repeat;
+      color:white;
     }
-    header h1{margin:0 0 6px; font-size:clamp(1.6rem,3.2vw,2.4rem)}
-    header p{margin:0; color:var(--muted); font-size:clamp(.95rem,2.2vw,1.05rem)}
-    .wrap{max-width:1100px; margin:0 auto; padding:14px 14px 48px; display:grid; gap:14px; grid-template-columns:1.2fr .8fr;}
+    .hero-inner{
+      max-width:900px;
+      backdrop-filter: blur(2px);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:22px;
+      padding:18px 16px;
+    }
+    .hero h1{
+      font-family: "Playfair Display", serif;
+      font-weight:800;
+      font-size:clamp(1.8rem,4.8vw,3rem);
+      margin:0 0 6px;
+      letter-spacing:.3px;
+    }
+    .hero p{
+      margin:0;
+      font-size:clamp(1rem,2.4vw,1.2rem);
+      opacity:.95;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:-36px auto 44px;
+      padding:0 14px;
+      display:grid;
+      gap:14px;
+      grid-template-columns:1.1fr .9fr;
+    }
     @media (max-width: 900px){ .wrap{grid-template-columns:1fr;} }
 
     .card{
-      background:linear-gradient(180deg,#191d27 0%, var(--card) 100%);
-      border:1px solid rgba(255,255,255,.06);
+      background:var(--card);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:14px;
+      border:1px solid rgba(34,19,13,.06);
     }
-    .card h2{margin:0 0 10px; font-size:1.2rem}
-    .muted{color:var(--muted)}
+    .card h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 10px;
+      font-size:1.4rem;
+      color:var(--deep-brown);
+    }
 
+    /* List */
     .category{
-      border-radius:12px;
-      background:rgba(255,255,255,.03);
-      border:1px dashed rgba(255,255,255,.08);
-      padding:10px; margin:10px 0;
+      background:var(--cream);
+      border:1px dashed rgba(99,63,33,.25);
+      border-radius:14px;
+      padding:10px;
+      margin:10px 0;
     }
     .category h3{
-      margin:0 0 8px; font-size:1.05rem; display:flex; align-items:center; gap:8px;
+      margin:0 0 8px;
+      font-size:1.05rem;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--warm-brown);
     }
     .pill{
-      font-size:.78rem; padding:2px 8px; border-radius:999px;
-      background:rgba(255,180,84,.12); color:var(--accent); border:1px solid rgba(255,180,84,.35);
+      font-size:.78rem;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(99,63,33,.2);
+      color:var(--warm-brown);
+      font-weight:700;
     }
     ul.items{list-style:none; padding:0; margin:0; display:grid; gap:6px;}
+
     .item-row{
-      display:grid; grid-template-columns: 18px 1fr auto; align-items:center; gap:8px;
-      padding:7px 8px; border-radius:10px; background:rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.05);
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      background:white;
+      border:1px solid rgba(99,63,33,.1);
     }
     .item-row small{color:var(--muted)}
     .claimed{
-      font-size:.82rem; color:var(--good); background:rgba(90,214,125,.12);
-      border:1px solid rgba(90,214,125,.35); padding:2px 6px; border-radius:999px;
-      white-space:nowrap;
+      font-size:.8rem; font-weight:700;
+      color:white; background:var(--cranberry);
+      padding:4px 8px; border-radius:999px; white-space:nowrap;
     }
     .unclaimed{
-      font-size:.82rem; color:var(--muted); background:rgba(154,163,178,.08);
-      border:1px solid rgba(154,163,178,.25); padding:2px 6px; border-radius:999px;
-      white-space:nowrap;
+      font-size:.8rem; font-weight:700;
+      color:var(--warm-brown); background:#fff3d6;
+      padding:4px 8px; border-radius:999px; white-space:nowrap;
+      border:1px solid rgba(245,96,4,.25);
     }
 
-    label{display:block; font-size:.95rem; margin:8px 0 6px;}
+    /* Form */
+    label{display:block; font-weight:800; margin:8px 0 5px; color:var(--deep-brown);}
     input, select, textarea, button{
-      width:100%; padding:10px 11px; font-size:1rem;
-      border-radius:10px; border:1px solid rgba(255,255,255,.10);
-      background:#0f1219; color:var(--text);
+      width:100%;
+      padding:10px 11px;
+      font-size:1rem;
+      border-radius:12px;
+      border:1px solid rgba(34,19,13,.15);
+      background:#fff;
+      color:var(--text);
       outline:none;
+      font-family:inherit;
     }
     textarea{min-height:70px; resize:vertical}
-    input::placeholder, textarea::placeholder{color:#6f7786}
 
     .row{display:grid; gap:8px; grid-template-columns:1fr 1fr;}
     @media (max-width:520px){ .row{grid-template-columns:1fr;} }
 
     .btn{
-      cursor:pointer; border:none; background:linear-gradient(135deg,var(--accent),#ff8f3b);
-      color:#251600; font-weight:700; margin-top:8px;
-      box-shadow:0 8px 20px rgba(255,180,84,.25);
+      cursor:pointer; border:none;
+      background:linear-gradient(135deg,var(--pumpkin), #ff8b3d);
+      color:white; font-weight:900;
+      margin-top:8px;
+      box-shadow:0 8px 18px rgba(245,96,4,.25);
+      letter-spacing:.3px;
     }
-    .btn:active{transform:translateY(1px)}
     .btn.secondary{
-      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18);
+      background:#fff8ef; color:var(--warm-brown);
+      border:1px solid rgba(245,96,4,.25);
       box-shadow:none;
+      font-weight:800;
     }
 
     .notice{
-      margin-top:10px; padding:9px 10px; border-radius:10px; font-size:.95rem;
-      border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04);
+      margin-top:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:.95rem;
+      background:var(--cream);
+      border:1px solid rgba(99,63,33,.18);
     }
-    .notice.good{border-color:rgba(90,214,125,.5); color:var(--good)}
-    .notice.warn{border-color:rgba(255,122,122,.5); color:var(--warn)}
+    .notice.good{background:#eefbea; border-color:#bfe8c9; color:#186b2c; font-weight:800;}
+    .notice.warn{background:#fff0f0; border-color:#f0bcbc; color:#8b1a1a; font-weight:800;}
+    .muted{color:var(--muted); font-weight:600;}
 
-    .loading{
-      display:flex; gap:8px; align-items:center; color:var(--muted); font-size:.95rem;
+    .loading{color:var(--muted); font-size:1rem;}
+    footer{
+      text-align:center;
+      font-size:.95rem;
+      color:var(--muted);
+      padding:0 14px 22px;
     }
-    .dot{width:6px; height:6px; border-radius:999px; background:var(--muted); animation:bounce 1.2s infinite ease-in-out;}
-    .dot:nth-child(2){animation-delay:.15s}
-    .dot:nth-child(3){animation-delay:.3s}
-    @keyframes bounce{0%,80%,100%{transform:scale(0.6); opacity:.6}40%{transform:scale(1); opacity:1}}
-
-    footer{max-width:1100px; margin:0 auto; padding:0 14px 40px; color:var(--muted); font-size:.9rem; text-align:center;}
-    a{color:var(--accent2)}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🦃 Thanksgiving Potluck Signup</h1>
-    <p>Pick something from the list, or add a new item/category if you’ve got a great idea.</p>
-  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>🧡 Thanksgiving Potluck</h1>
+      <p>Let’s build a table full of love. Pick something to bring — or add your own idea.</p>
+    </div>
+  </section>
 
   <main class="wrap">
+
     <!-- LEFT: LIVE LIST -->
     <section class="card">
-      <h2>What’s on the Table</h2>
-      <div id="listArea" class="loading">
-        Loading list
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      </div>
+      <h2>What We’ve Got So Far</h2>
+      <div id="listArea" class="loading">Loading the list...</div>
     </section>
 
-    <!-- RIGHT: FORM -->
+    <!-- RIGHT: SIMPLE FORM -->
     <section class="card">
-      <h2>Sign Up to Bring Something</h2>
+      <h2>Claim Your Dish</h2>
 
       <form id="signupForm">
         <label>Your name</label>
-        <input id="name" name="name" required placeholder="e.g., Jonathan"/>
+        <input id="name" required placeholder="Type your name"/>
 
         <div class="row">
           <div>
-            <label>Choose a category</label>
-            <select id="categorySelect" name="categorySelect"></select>
+            <label>Category</label>
+            <select id="categorySelect"></select>
           </div>
           <div>
-            <label>Choose an item in that category</label>
-            <select id="itemSelect" name="itemSelect"></select>
+            <label>Item</label>
+            <select id="itemSelect"></select>
           </div>
         </div>
 
-        <div class="notice muted" style="margin-top:8px;">
-          If what you want isn’t listed, use the “Add new item” section below.
-        </div>
-
-        <label>Quantity / Serving size (optional)</label>
-        <input id="quantity" name="quantity" placeholder="e.g., feeds 8 / 2 trays / 1 pie"/>
+        <label>Serving / quantity (optional)</label>
+        <input id="quantity" placeholder="e.g., feeds 6 / 2 trays / 1 pie"/>
 
         <label>Notes (optional)</label>
-        <textarea id="notes" name="notes" placeholder="Dietary notes, brand, flavor, etc."></textarea>
+        <textarea id="notes" placeholder="Dietary notes, flavor, brand, etc."></textarea>
 
-        <button class="btn" type="submit">Lock it in 🙌</button>
-        <button class="btn secondary" type="button" id="resetBtn">Clear form</button>
-
+        <button class="btn" type="submit">I’ll bring this 🍁</button>
         <div id="status"></div>
 
-        <hr style="margin:14px 0; border:0; height:1px; background:rgba(255,255,255,.08)"/>
+        <hr style="margin:14px 0; border:none; height:1px; background:rgba(99,63,33,.15)"/>
 
-        <h3 style="margin:0 0 8px;">Add New Item (Optional)</h3>
+        <h2 style="font-size:1.15rem;margin-top:0;">Add Something New</h2>
+        <p class="muted" style="margin:0 0 6px;">Not on the list? Add it here.</p>
 
-        <label>Add to existing category OR create new</label>
+        <label>Put it under…</label>
         <div class="row">
           <select id="addCategoryExisting"></select>
-          <input id="addCategoryNew" placeholder="New category name (if needed)"/>
+          <input id="addCategoryNew" placeholder="or type a new category"/>
         </div>
 
-        <label>New item name</label>
-        <input id="addItemName" placeholder="e.g., mashed potatoes"/>
+        <label>New item</label>
+        <input id="addItemName" placeholder="e.g., sweet potato casserole"/>
 
-        <label>New item notes (optional)</label>
-        <input id="addItemNotes" placeholder="e.g., garlic + chives / vegan / spicy"/>
+        <label>Notes (optional)</label>
+        <input id="addItemNotes" placeholder="e.g., vegan / extra marshmallows"/>
 
-        <button class="btn secondary" type="button" id="addItemBtn">Add item to list</button>
+        <button class="btn secondary" type="button" id="addItemBtn">Add to list 🥧</button>
         <div id="addItemStatus"></div>
       </form>
     </section>
+
   </main>
 
   <footer>
-    Pro tip: If you add a new item, you can select it immediately after refresh.
+    “Gratitude turns what we have into enough.” 🍂
   </footer>
 
 <script>
-  // 1) PASTE YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE:
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8OTuljKtbFlrn67N-2Zr8WZpnSVyTAgJ-tK2pD69oMQZZMVB0O9_nGn8F_GGDVH0o/exec";
+  // Paste your deployed Apps Script Web App URL here:
+  const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
   const listArea = document.getElementById('listArea');
   const categorySelect = document.getElementById('categorySelect');
@@ -220,11 +304,10 @@
     const { categories, signups } = json;
 
     if (!categories || Object.keys(categories).length === 0){
-      listArea.innerHTML = `<div class="notice warn">No items found yet. Add one on the right!</div>`;
+      listArea.innerHTML = `<div class="notice warn">No items yet — be the first to add one!</div>`;
       return;
     }
 
-    // Build claimed lookup: category|item -> array of bringers
     const claimed = {};
     (signups || []).forEach(s => {
       const key = `${s.category}||${s.item}`;
@@ -239,7 +322,7 @@
 
       html += `
         <div class="category">
-          <h3>${cat} <span class="pill">${total} item${total!==1?"s":""}</span></h3>
+          <h3>${cat} <span class="pill">${total}</span></h3>
           <ul class="items">
       `;
 
@@ -247,15 +330,14 @@
         const key = `${cat}||${it.name}`;
         const who = claimed[key] || [];
         const badge = who.length
-          ? `<span class="claimed">Claimed: ${who.join(", ")}</span>`
-          : `<span class="unclaimed">Unclaimed</span>`;
+          ? `<span class="claimed">${who.join(", ")}</span>`
+          : `<span class="unclaimed">Still open</span>`;
 
         html += `
           <li class="item-row">
-            <input type="radio" disabled />
             <div>
-              <div><strong>${it.name}</strong></div>
-              ${it.notes ? `<small>${it.notes}</small>` : ``}
+              <strong>${it.name}</strong>
+              ${it.notes ? `<br><small>${it.notes}</small>` : ``}
             </div>
             ${badge}
           </li>`;
@@ -270,12 +352,11 @@
   function populateCategorySelectors(json){
     const cats = Object.keys(json.categories || {}).sort();
 
-    // Category dropdowns
     categorySelect.innerHTML = cats.map(c=>`<option value="${c}">${c}</option>`).join("");
-    addCategoryExisting.innerHTML = `<option value="">-- Choose existing --</option>` +
+    addCategoryExisting.innerHTML =
+      `<option value="">Choose existing</option>` +
       cats.map(c=>`<option value="${c}">${c}</option>`).join("");
 
-    // Trigger item dropdown fill
     updateItemSelect();
   }
 
@@ -283,15 +364,12 @@
     const cat = categorySelect.value;
     const items = (dataCache.categories && dataCache.categories[cat]) || [];
     itemSelect.innerHTML = items.map(i=>`<option value="${i.name}">${i.name}</option>`).join("");
-
     if (items.length === 0){
       itemSelect.innerHTML = `<option value="">(No items yet)</option>`;
     }
   }
-
   categorySelect.addEventListener("change", updateItemSelect);
 
-  // Submit signup
   document.getElementById("signupForm").addEventListener("submit", async (e)=>{
     e.preventDefault();
     const status = document.getElementById("status");
@@ -304,13 +382,12 @@
     const notes = document.getElementById("notes").value.trim();
 
     if(!name || !category || !item){
-      setStatus(status, "Please enter your name and pick a category + item.", "warn");
+      setStatus(status, "Please enter your name and pick an item.", "warn");
       return;
     }
 
     const body = new URLSearchParams({
-      action:"signup",
-      name, category, item, quantity, notes
+      action:"signup", name, category, item, quantity, notes
     });
 
     try{
@@ -322,17 +399,16 @@
       });
       const json = await res.json();
       if(json.ok){
-        setStatus(status, "You’re on the list! 🎉", "good");
+        setStatus(status, "Locked in! Can’t wait to taste it 😄", "good");
         await fetchData();
       }else{
         setStatus(status, json.error || "Something went wrong.", "warn");
       }
     }catch(err){
-      setStatus(status, "Could not reach server. Check SCRIPT_URL deployment.", "warn");
+      setStatus(status, "Could not reach server. Check SCRIPT_URL.", "warn");
     }
   });
 
-  // Add new item
   document.getElementById("addItemBtn").addEventListener("click", async ()=>{
     const addItemStatus = document.getElementById("addItemStatus");
     clearStatus(addItemStatus);
@@ -344,23 +420,20 @@
 
     const category = newCat || existing;
     if(!category){
-      setStatus(addItemStatus, "Pick an existing category or type a new one.", "warn");
+      setStatus(addItemStatus, "Pick a category or type a new one.", "warn");
       return;
     }
     if(!itemName){
-      setStatus(addItemStatus, "Type a name for the new item.", "warn");
+      setStatus(addItemStatus, "Type the new item name.", "warn");
       return;
     }
 
     const body = new URLSearchParams({
-      action:"addItem",
-      category,
-      item: itemName,
-      notes: itemNotes
+      action:"addItem", category, item: itemName, notes: itemNotes
     });
 
     try{
-      setStatus(addItemStatus, "Adding item…", "muted");
+      setStatus(addItemStatus, "Adding your idea…", "muted");
       const res = await fetch(SCRIPT_URL, {
         method:"POST",
         headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
@@ -368,38 +441,25 @@
       });
       const json = await res.json();
       if(json.ok){
-        setStatus(addItemStatus, `Added "${itemName}" under ${category}. Refreshing list…`, "good");
+        setStatus(addItemStatus, `Added! "${itemName}" is now on the list.`, "good");
 
-        // clear add controls
         document.getElementById("addCategoryNew").value="";
         document.getElementById("addItemName").value="";
         document.getElementById("addItemNotes").value="";
         addCategoryExisting.value="";
 
         await fetchData();
-
-        // auto-select new category/item
         categorySelect.value = category;
         updateItemSelect();
         itemSelect.value = itemName;
-
       }else{
         setStatus(addItemStatus, json.error || "Could not add item.", "warn");
       }
     }catch(err){
-      setStatus(addItemStatus, "Could not reach server. Check SCRIPT_URL deployment.", "warn");
+      setStatus(addItemStatus, "Could not reach server. Check SCRIPT_URL.", "warn");
     }
   });
 
-  // Reset
-  document.getElementById("resetBtn").addEventListener("click", ()=>{
-    document.getElementById("signupForm").reset();
-    updateItemSelect();
-    clearStatus(document.getElementById("status"));
-    clearStatus(document.getElementById("addItemStatus"));
-  });
-
-  // Boot
   fetchData();
 </script>
 </body>
