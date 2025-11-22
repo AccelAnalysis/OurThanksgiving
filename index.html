@@ -44,8 +44,9 @@
       justify-content:center;
       text-align:center;
       padding:32px 16px;
+      /* CORRECTED IMAGE URL for stability */
       background:linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                 url("https://source.unsplash.com/featured/1600x900/?thanksgiving,feast,autumn") center/cover no-repeat;
+                 url("https://images.unsplash.com/photo-1543360439-d81b312781d4") center/cover no-repeat;
       color:white;
     }
     .hero-inner{
@@ -67,16 +68,17 @@
       opacity:.96;
     }
 
+    /* CORRECTED MARGIN */
     .wrap{
       max-width:1160px;
-      margin:-50px auto 60px;
+      margin:20px auto 60px; /* REMOVED NEGATIVE MARGIN */
       padding:0 16px;
       display:grid;
       gap:20px;
       grid-template-columns:1.15fr .85fr;
     }
     @media (max-width:940px){
-      .wrap{grid-template-columns:1fr; margin-top:-30px;}
+      .wrap{grid-template-columns:1fr; margin-top:20px;} /* ADJUSTED MARGIN */
     }
 
     .card{
@@ -138,8 +140,8 @@
       background:var(--cranberry);
       color:white;
       font-weight:800;
-      font-size:.82rem;
-      padding:6px 12px;
+      font-size:.9rem; /* IMPROVED FONT SIZE */
+      padding:8px 14px; /* IMPROVED PADDING */
       border-radius:99px;
     }
     .unclaimed{
@@ -147,8 +149,8 @@
       color:var(--pumpkin);
       border:1px solid rgba(245,96,4,.3);
       font-weight:800;
-      font-size:.82rem;
-      padding:6px 12px;
+      font-size:.9rem; /* IMPROVED FONT SIZE */
+      padding:8px 14px; /* IMPROVED PADDING */
       border-radius:99px;
     }
 
@@ -172,7 +174,7 @@
     input:focus, select:focus, textarea:focus{
       outline:none;
       border-color:var(--pumpkin);
-      box-shadow:0 0 0 3px rgba(245,96,4,.2);
+      box-shadow:0 0 0 4px rgba(245,96,4,.4); /* IMPROVED FOCUS RING */
     }
     textarea{min-height:80px; resize:vertical;}
     .row{
@@ -254,15 +256,17 @@
 
   <main class="wrap">
 
-    <!-- Live List -->
     <section class="card" aria-labelledby="list-title">
       <h2 id="list-title">What We’ve Got So Far</h2>
       <div id="listArea" class="loading">Loading the feast...</div>
     </section>
 
-    <!-- Signup Form -->
     <section class="card" aria-labelledby="form-title">
       <h2 id="form-title">Claim Your Dish</h2>
+
+      <p class="muted" style="margin-bottom: 20px;">
+        To add a new dish, <a href="#addItemForm" style="color: var(--pumpkin); font-weight: 700;">click here</a>.
+      </p>
 
       <form id="signupForm" novalidate>
         <label for="name">Your Name</label>
@@ -293,8 +297,8 @@
 
       <hr style="margin:30px 0; border:none; height:1px; background:rgba(99,63,33,.15);"/>
 
-      <h2 style="font-size:1.3rem;">Don’t See Your Dish?</h2>
-      <p class="muted">Add it below — we love surprises!</p>
+      <h2 style="font-size:1.55rem; color:var(--pumpkin);">🍽️ Add Your Own Dish</h2>
+      <p class="muted">Don't see your favorite? Add it below!</p>
 
       <form id="addItemForm" novalidate>
         <div class="row">
@@ -326,7 +330,7 @@
 
 <script>
   // REPLACE THIS WITH YOUR ACTUAL GOOGLE APPS SCRIPT WEB APP URL
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8OTuljKtbFlrn67N-2Zr8WZpnSVyTAgJ-tK2pD69oMQZZMVB0O9_nGn8F_GGDVH0o/exec";   // ← PUT YOUR URL HERE
+  const SCRIPT_URL = "PUT YOUR WEB APP URL HERE";   // ← PUT YOUR URL HERE
 
   if (SCRIPT_URL.includes("AKfycbx") || SCRIPT_URL.includes("PASTE")) {
     alert("Please paste your Google Apps Script Web App URL into the SCRIPT_URL variable!");
