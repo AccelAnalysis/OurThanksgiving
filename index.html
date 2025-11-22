@@ -22,7 +22,8 @@
       --muted:#6a564f;
       --radius:20px;
       --shadow:0 14px 36px rgba(34,19,13,.16);
-      --transition:all 0.25s ease;
+      --transition:all 0.2s ease;
+      --ring:0 0 0 4px rgba(245,96,4,.25);
     }
 
     *{box-sizing:border-box; margin:0; padding:0;}
@@ -44,7 +45,6 @@
       justify-content:center;
       text-align:center;
       padding:32px 16px;
-      /* CORRECTED IMAGE URL for stability */
       background:linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.45)),
                  url("https://www.bu.edu/files/2024/11/thanksgiving-dinner-feat.jpg") center/cover no-repeat;
       color:white;
@@ -68,17 +68,16 @@
       opacity:.96;
     }
 
-    /* CORRECTED MARGIN */
     .wrap{
       max-width:1160px;
-      margin:20px auto 60px; /* REMOVED NEGATIVE MARGIN */
+      margin:20px auto 60px;
       padding:0 16px;
       display:grid;
       gap:20px;
       grid-template-columns:1.15fr .85fr;
     }
     @media (max-width:940px){
-      .wrap{grid-template-columns:1fr; margin-top:20px;} /* ADJUSTED MARGIN */
+      .wrap{grid-template-columns:1fr; margin-top:20px;}
     }
 
     .card{
@@ -95,7 +94,7 @@
       margin-bottom:16px;
     }
 
-    /* Categories & Items */
+    /* Category blocks */
     .category{
       background:var(--cream);
       border:2px dashed rgba(99,63,33,.22);
@@ -103,13 +102,19 @@
       padding:16px;
       margin:16px 0;
     }
+    .cat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
     .category h3{
       font-size:1.18rem;
       color:var(--warm-brown);
       display:flex;
       align-items:center;
       gap:10px;
-      margin-bottom:12px;
     }
     .pill{
       font-size:.75rem;
@@ -120,10 +125,13 @@
       font-weight:800;
       color:var(--warm-brown);
     }
+
     .items{
       display:grid;
       gap:10px;
     }
+
+    /* Clickable item cards */
     .item-row{
       display:grid;
       grid-template-columns:1fr auto;
@@ -134,24 +142,85 @@
       border-radius:14px;
       border:1px solid rgba(99,63,33,.12);
       transition:var(--transition);
+      cursor:pointer;
+      position:relative;
     }
-    .item-row:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);}
+    .item-row:hover{box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-1px);}
+    .item-row.selected{
+      box-shadow:var(--ring), var(--shadow);
+      border-color:rgba(245,96,4,.7);
+    }
+    .item-row.disabled{
+      cursor:not-allowed;
+      opacity:.85;
+    }
+
     .claimed{
       background:var(--cranberry);
       color:white;
       font-weight:800;
-      font-size:.9rem; /* IMPROVED FONT SIZE */
-      padding:8px 14px; /* IMPROVED PADDING */
+      font-size:.9rem;
+      padding:8px 14px;
       border-radius:99px;
+      white-space:nowrap;
     }
     .unclaimed{
       background:#fff3d6;
       color:var(--pumpkin);
       border:1px solid rgba(245,96,4,.3);
       font-weight:800;
-      font-size:.9rem; /* IMPROVED FONT SIZE */
-      padding:8px 14px; /* IMPROVED PADDING */
+      font-size:.9rem;
+      padding:8px 14px;
       border-radius:99px;
+      white-space:nowrap;
+    }
+
+    /* Add item inline row */
+    .add-row{
+      margin-top:10px;
+      background:#fff;
+      border:1px solid rgba(99,63,33,.18);
+      border-radius:12px;
+      padding:10px;
+      display:grid;
+      gap:8px;
+    }
+    .add-row .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    @media (max-width:520px){ .add-row .row{grid-template-columns:1fr;} }
+
+    /* Buttons */
+    .btn{
+      cursor:pointer;
+      border:none;
+      padding:12px 16px;
+      font-size:1rem;
+      font-weight:900;
+      border-radius:12px;
+      transition:var(--transition);
+      background:linear-gradient(135deg,var(--pumpkin), #ff7a1a);
+      color:white;
+      box-shadow:0 6px 16px rgba(245,96,4,.25);
+    }
+    .btn:hover{transform:translateY(-1px);}
+    .btn:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+    .btn.secondary{
+      background:#fff8ef;
+      color:var(--warm-brown);
+      border:2px solid rgba(245,96,4,.3);
+      box-shadow:none;
+      font-weight:800;
+    }
+    .btn.tiny{
+      padding:8px 12px;
+      font-size:.9rem;
+      box-shadow:none;
+      background:#fff;
+      color:var(--pumpkin);
+      border:2px solid rgba(245,96,4,.35);
     }
 
     /* Form */
@@ -161,7 +230,7 @@
       margin:14px 0 6px;
       color:var(--deep-brown);
     }
-    input, select, textarea{
+    input, textarea{
       width:100%;
       padding:12px 14px;
       font-size:1rem;
@@ -171,43 +240,28 @@
       font-family:inherit;
       transition:var(--transition);
     }
-    input:focus, select:focus, textarea:focus{
+    input:focus, textarea:focus{
       outline:none;
       border-color:var(--pumpkin);
-      box-shadow:0 0 0 4px rgba(245,96,4,.4); /* IMPROVED FOCUS RING */
+      box-shadow:0 0 0 4px rgba(245,96,4,.25);
     }
     textarea{min-height:80px; resize:vertical;}
-    .row{
-      display:grid;
-      gap:12px;
-      grid-template-columns:1fr 1fr;
-    }
-    @media (max-width:520px){.row{grid-template-columns:1fr;}}
 
-    .btn{
-      cursor:pointer;
-      border:none;
-      padding:14px 20px;
-      font-size:1.05rem;
+    .selected-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:var(--cream);
+      border:1px dashed rgba(99,63,33,.35);
+      padding:8px 10px;
+      border-radius:12px;
       font-weight:900;
-      border-radius:14px;
-      margin-top:12px;
-      transition:var(--transition);
-      background:linear-gradient(135deg,var(--pumpkin), #ff7a1a);
-      color:white;
-      box-shadow:0 8px 20px rgba(245,96,4,.3);
-    }
-    .btn:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(245,96,4,.35);}
-    .btn:disabled{
-      opacity:0.6;
-      cursor:not-allowed;
-      transform:none;
-    }
-    .btn.secondary{
-      background:#fff8ef;
       color:var(--warm-brown);
-      border:2px solid rgba(245,96,4,.3);
-      box-shadow:none;
+      margin-bottom:8px;
+    }
+    .selected-chip small{
+      font-weight:700;
+      color:var(--muted);
     }
 
     .notice{
@@ -232,17 +286,8 @@
       color:var(--muted);
       font-size:.95rem;
     }
-    .spinner{
-      display:inline-block;
-      width:16px;
-      height:16px;
-      border:2px solid #fff;
-      border-top-color:transparent;
-      border-radius:50%;
-      animation:spin 0.8s linear infinite;
-      margin-right:8px;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .muted{color:var(--muted); font-weight:700;}
   </style>
 </head>
 <body>
@@ -250,38 +295,29 @@
   <section class="hero" role="banner">
     <div class="hero-inner">
       <h1>Thanksgiving PotBlessing!</h1>
-      <p>Let’s give thanks together. Pick a dish or add your own!</p>
+      <p>Click a dish you want to bring, or add a new one for the list.</p>
     </div>
   </section>
 
   <main class="wrap">
 
+    <!-- LEFT: LIST -->
     <section class="card" aria-labelledby="list-title">
       <h2 id="list-title">What We’ve Got So Far</h2>
       <div id="listArea" class="loading">Loading the feast...</div>
     </section>
 
-    <section class="card" aria-labelledby="form-title">
-      <h2 id="form-title">Claim Your Dish</h2>
+    <!-- RIGHT: CLAIM FORM -->
+    <section class="card" aria-labelledby="form-title" id="claimCard">
+      <h2 id="form-title">Bring This Dish</h2>
 
-      <p class="muted" style="margin-bottom: 20px;">
-        To add a new dish, <a href="#addItemForm" style="color: var(--pumpkin); font-weight: 700;">click here</a>.
-      </p>
+      <div id="selectedInfo" class="notice muted" style="background:#fff;">
+        Click an <strong>Available</strong> dish on the left to claim it.
+      </div>
 
-      <form id="signupForm" novalidate>
+      <form id="claimForm" novalidate>
         <label for="name">Your Name</label>
         <input id="name" type="text" required placeholder="e.g., Aunt Bea" autocomplete="name"/>
-
-        <div class="row">
-          <div>
-            <label for="categorySelect">Category</label>
-            <select id="categorySelect" required></select>
-          </div>
-          <div>
-            <label for="itemSelect">Dish</label>
-            <select id="itemSelect" required></select>
-          </div>
-        </div>
 
         <label for="quantity">Serving Size <span class="muted">(optional)</span></label>
         <input id="quantity" placeholder="e.g., feeds 8, 1 large tray, 2 pies"/>
@@ -289,251 +325,365 @@
         <label for="notes">Notes <span class="muted">(optional)</span></label>
         <textarea id="notes" placeholder="e.g., gluten-free, extra spicy, homemade crust"></textarea>
 
-        <button type="submit" class="btn" id="submitBtn">
-          <span class="btn-text">I’ll Bring This!</span>
+        <button type="submit" class="btn" id="claimBtn" disabled>
+          I’ll Bring This!
         </button>
         <div id="status" aria-live="polite"></div>
-      </form>
-
-      <hr style="margin:30px 0; border:none; height:1px; background:rgba(99,63,33,.15);"/>
-
-      <h2 style="font-size:1.55rem; color:var(--pumpkin);">🍽️ Add Your Own Dish</h2>
-      <p class="muted">Don't see your favorite? Add it below!</p>
-
-      <form id="addItemForm" novalidate>
-        <div class="row">
-          <div>
-            <label for="addCategoryExisting">Existing Category</label>
-            <select id="addCategoryExisting"><option value="">Choose or type new →</option></select>
-          </div>
-          <div>
-            <label for="addCategoryNew">Or New Category</label>
-            <input id="addCategoryNew" placeholder="e.g., Vegan Options"/>
-          </div>
-        </div>
-
-        <label for="addItemName">Dish Name</label>
-        <input id="addItemName" required placeholder="e.g., Vegan Mushroom Wellington"/>
-
-        <label for="addItemNotes">Notes <span class="muted">(optional)</span></label>
-        <input id="addItemNotes" placeholder="e.g., nut-free, serves 10"/>
-
-        <button type="submit" class="btn secondary" id="addItemBtn">Add to List</button>
-        <div id="addItemStatus" aria-live="polite"></div>
       </form>
     </section>
   </main>
 
   <footer>
     “Gratitude turns what we have into enough.” — Anonymous
-    "O give thanks untio the LORD, for He is good." – Psalm 107:1
   </footer>
 
 <script>
-  // REPLACE THIS WITH YOUR ACTUAL GOOGLE APPS SCRIPT WEB APP URL
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8OTuljKtbFlrn67N-2Zr8WZpnSVyTAgJ-tK2pD69oMQZZMVB0O9_nGn8F_GGDVH0o/exec";   // ← PUT YOUR URL HERE
-
-  if (SCRIPT_URL.includes("AKfycbx") || SCRIPT_URL.includes("PASTE")) {
-    alert("Please paste your Google Apps Script Web App URL into the SCRIPT_URL variable!");
-  }
+  // REPLACE WITH YOUR APPS SCRIPT WEB APP URL
+  const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
   const listArea = document.getElementById('listArea');
-  const categorySelect = document.getElementById('categorySelect');
-  const itemSelect = document.getElementById('itemSelect');
-  const addCategoryExisting = document.getElementById('addCategoryExisting');
-  const submitBtn = document.getElementById('submitBtn');
-  const addItemBtn = document.getElementById('addItemBtn');
+  const claimForm = document.getElementById('claimForm');
+  const claimBtn = document.getElementById('claimBtn');
+  const statusEl = document.getElementById('status');
+  const selectedInfo = document.getElementById('selectedInfo');
 
-  let dataCache = { categories: {}, signups: [] };
+  let dataCache = { categories:{}, signups:[] };
+  let selected = null; // {category, item, isClaimed, claimedBy[]}
 
-  function setStatus(el, msg, type = "muted") {
+  function setStatus(el, msg, type="muted"){
     el.innerHTML = `<div class="notice ${type}">${msg}</div>`;
   }
-  function clearStatus(el) { el.innerHTML = ""; }
+  function clearStatus(el){ el.innerHTML = ""; }
 
-  function showLoading(btn) {
-    const text = btn.querySelector('.btn-text') || btn;
-    btn.disabled = true;
-    text.innerHTML = '<span class="spinner"></span> Saving...';
-  }
-  function hideLoading(btn, text) {
-    btn.disabled = false;
-    const txtEl = btn.querySelector('.btn-text') || btn;
-    txtEl.textContent = text;
-  }
-
-  async function fetchData() {
-    try {
+  async function fetchData(){
+    try{
       const res = await fetch(`${SCRIPT_URL}?action=list`);
-      if (!res.ok) throw new Error("Server error");
-      const json = await res.json();
-      dataCache = json;
-      renderList(json);
-      populateSelectors(json);
-    } catch (err) {
-      listArea.innerHTML = `<div class="notice warn">Could not load list. Check your internet or the script URL.</div>`;
+      if(!res.ok) throw new Error("Server error");
+      dataCache = await res.json();
+      renderList(dataCache);
+      // try to re-highlight selected after refresh
+      if(selected){
+        const key = `${selected.category}||${selected.item}`;
+        highlightSelectedByKey(key);
+        hydrateSelectedFromCache(key);
+        renderSelectedPanel();
+      }
+    }catch(err){
+      listArea.innerHTML = `<div class="notice warn">Could not load list. Check SCRIPT_URL.</div>`;
     }
   }
 
-  function renderList({ categories, signups }) {
-    if (!categories || Object.keys(categories).length === 0) {
-      listArea.innerHTML = `<div class="notice warn">No dishes yet — be the first!</div>`;
+  function buildClaimedMap(signups){
+    const map = {};
+    (signups||[]).forEach(s=>{
+      const key = `${s.category}||${s.item}`;
+      map[key] = map[key] || [];
+      map[key].push({
+        name:s.name,
+        quantity:s.quantity || "",
+        notes:s.notes || ""
+      });
+    });
+    return map;
+  }
+
+  function renderList({categories, signups}){
+    if(!categories || Object.keys(categories).length===0){
+      listArea.innerHTML = `<div class="notice warn">No dishes yet — add the first one!</div>`;
       return;
     }
 
-    const claimed = {};
-    (signups || []).forEach(s => {
-      const key = `${s.category}||${s.item}`;
-      claimed[key] = claimed[key] || [];
-      claimed[key].push(s.name + (s.quantity ? ` (${s.quantity})` : ""));
-    });
+    const claimedMap = buildClaimedMap(signups);
 
     let html = "";
-    Object.keys(categories).sort().forEach(cat => {
+    Object.keys(categories).sort().forEach(cat=>{
       const items = categories[cat] || [];
+
       html += `
-        <div class="category">
-          <h3>${cat} <span class="pill">${items.length}</span></h3>
-          <ul class="items">
-            ${items.map(it => {
+        <div class="category" data-category="${escapeHtml(cat)}">
+          <div class="cat-header">
+            <h3>${escapeHtml(cat)} <span class="pill">${items.length}</span></h3>
+            <button class="btn tiny addItemToggle" type="button" data-category="${escapeHtml(cat)}">+ Add Item</button>
+          </div>
+
+          <div class="items">
+            ${items.map(it=>{
               const key = `${cat}||${it.name}`;
-              const takers = claimed[key] || [];
-              const badge = takers.length
-                ? `<span class="claimed">${takers.join(", ")}</span>`
+              const takers = claimedMap[key] || [];
+              const isClaimed = takers.length>0;
+
+              const badge = isClaimed
+                ? `<span class="claimed">${takers.map(t=>t.name).join(", ")}</span>`
                 : `<span class="unclaimed">Available</span>`;
+
               return `
-                <li class="item-row">
+                <div class="item-row ${isClaimed ? "disabled" : ""}"
+                     role="button"
+                     tabindex="0"
+                     data-key="${escapeHtml(key)}"
+                     data-category="${escapeHtml(cat)}"
+                     data-item="${escapeHtml(it.name)}">
                   <div>
-                    <strong>${it.name}</strong>
-                    ${it.notes ? `<br><small>${it.notes}</small>` : ""}
+                    <strong>${escapeHtml(it.name)}</strong>
+                    ${it.notes ? `<br><small>${escapeHtml(it.notes)}</small>` : ""}
                   </div>
                   ${badge}
-                </li>`;
+                </div>
+              `;
             }).join("")}
-          </ul>
-        </div>`;
+          </div>
+
+          <div class="add-row" id="addRow-${safeId(cat)}" style="display:none;">
+            <div class="row">
+              <input id="newItemName-${safeId(cat)}" placeholder="New dish name (e.g., mashed potatoes)"/>
+              <input id="newItemNotes-${safeId(cat)}" placeholder="Notes (optional)"/>
+            </div>
+            <button class="btn secondary saveNewItem"
+                    type="button"
+                    data-category="${escapeHtml(cat)}">
+              Add to list
+            </button>
+            <div class="addStatus" id="addStatus-${safeId(cat)}"></div>
+          </div>
+        </div>
+      `;
     });
+
     listArea.innerHTML = html;
-  }
 
-  function populateSelectors({ categories, signups }) {
-    const cats = Object.keys(categories).sort();
-
-    const claimedMap = {};
-    (signups || []).forEach(s => {
-      const key = `${s.category}||${s.item}`;
-      claimedMap[key] = (claimedMap[key] || 0) + 1;
+    // Wire clicks
+    listArea.querySelectorAll(".item-row").forEach(card=>{
+      card.addEventListener("click", ()=>onItemClick(card));
+      card.addEventListener("keypress", (e)=>{ if(e.key==="Enter") onItemClick(card); });
     });
 
-    // Category selects
-    const catOptions = cats.map(c => `<option value="${c}">${c}</option>`).join("");
-    categorySelect.innerHTML = catOptions;
-    addCategoryExisting.innerHTML = `<option value="">Choose existing</option>` + catOptions;
+    listArea.querySelectorAll(".addItemToggle").forEach(btn=>{
+      btn.addEventListener("click", ()=>toggleAddRow(btn.dataset.category));
+    });
 
-    // Items — show taken status
-    function updateItems() {
-      const cat = categorySelect.value;
-      const items = categories[cat] || [];
-      itemSelect.innerHTML = items.map(it => {
-        const key = `${cat}||${it.name}`;
-        const taken = claimedMap[key] || 0;
-        const suffix = taken ? ` — Taken${taken > 1 ? ` (${taken})` : ""}` : "";
-        return `<option value="${it.name}">${it.name}${suffix}</option>`;
-      }).join("") || `<option>(No items in this category)</option>`;
-    }
-    categorySelect.addEventListener("change", updateItems);
-    updateItems();
+    listArea.querySelectorAll(".saveNewItem").forEach(btn=>{
+      btn.addEventListener("click", ()=>saveNewItem(btn.dataset.category));
+    });
   }
 
-  // Signup form
-  document.getElementById("signupForm").addEventListener("submit", async e => {
+  function onItemClick(card){
+    const key = card.dataset.key;
+    const isDisabled = card.classList.contains("disabled");
+    if(isDisabled){
+      // show who claimed it
+      selected = {
+        category: card.dataset.category,
+        item: card.dataset.item,
+        isClaimed: true
+      };
+      hydrateSelectedFromCache(key);
+      highlightSelectedByKey(key);
+      renderSelectedPanel(true);
+      scrollToClaim();
+      return;
+    }
+
+    selected = {
+      category: card.dataset.category,
+      item: card.dataset.item,
+      isClaimed: false
+    };
+    hydrateSelectedFromCache(key);
+    highlightSelectedByKey(key);
+    renderSelectedPanel();
+    scrollToClaim();
+  }
+
+  function hydrateSelectedFromCache(key){
+    const claimedMap = buildClaimedMap(dataCache.signups);
+    const takers = claimedMap[key] || [];
+    if(selected){
+      selected.claimedBy = takers;
+      selected.isClaimed = takers.length>0;
+    }
+  }
+
+  function highlightSelectedByKey(key){
+    listArea.querySelectorAll(".item-row").forEach(r=>r.classList.remove("selected"));
+    const el = listArea.querySelector(`.item-row[data-key="${cssEscape(key)}"]`);
+    if(el) el.classList.add("selected");
+  }
+
+  function renderSelectedPanel(showClaimedOnly=false){
+    clearStatus(statusEl);
+
+    if(!selected){
+      selectedInfo.className = "notice muted";
+      selectedInfo.style.background="#fff";
+      selectedInfo.innerHTML = `Click an <strong>Available</strong> dish on the left to claim it.`;
+      claimBtn.disabled = true;
+      return;
+    }
+
+    const chip = `
+      <div class="selected-chip">
+        <span>${escapeHtml(selected.category)}:</span>
+        <span>${escapeHtml(selected.item)}</span>
+      </div>
+    `;
+
+    if(selected.isClaimed){
+      const who = (selected.claimedBy||[]).map(t=>{
+        const extras = [];
+        if(t.quantity) extras.push(t.quantity);
+        if(t.notes) extras.push(t.notes);
+        return `<li><strong>${escapeHtml(t.name)}</strong>${extras.length?` — <small>${escapeHtml(extras.join(" | "))}</small>`:""}</li>`;
+      }).join("");
+
+      selectedInfo.className = "notice warn";
+      selectedInfo.innerHTML = `
+        ${chip}
+        <div>This dish is already claimed:</div>
+        <ul style="margin:6px 0 0 18px;">${who || "<li>Someone</li>"}</ul>
+      `;
+      claimBtn.disabled = true;
+      return;
+    }
+
+    selectedInfo.className = "notice good";
+    selectedInfo.innerHTML = `
+      ${chip}
+      <div>This one is still open. Add your name and claim it 😄</div>
+    `;
+    claimBtn.disabled = false;
+  }
+
+  function scrollToClaim(){
+    document.getElementById("claimCard").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  function toggleAddRow(category){
+    const row = document.getElementById(`addRow-${safeId(category)}`);
+    if(!row) return;
+    row.style.display = row.style.display==="none" ? "grid" : "none";
+  }
+
+  async function saveNewItem(category){
+    const nameInput = document.getElementById(`newItemName-${safeId(category)}`);
+    const notesInput = document.getElementById(`newItemNotes-${safeId(category)}`);
+    const addStatus = document.getElementById(`addStatus-${safeId(category)}`);
+
+    const itemName = (nameInput.value||"").trim();
+    const itemNotes = (notesInput.value||"").trim();
+
+    addStatus.innerHTML = "";
+    if(!itemName){
+      setStatus(addStatus, "Please type a dish name.", "warn");
+      return;
+    }
+
+    const payload = { action:"addItem", category, item:itemName, notes:itemNotes };
+
+    try{
+      setStatus(addStatus, "Adding…", "muted");
+      const res = await fetch(SCRIPT_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body:new URLSearchParams(payload)
+      });
+      const json = await res.json();
+      if(!json.ok){
+        setStatus(addStatus, json.error || "Couldn’t add item.", "warn");
+        return;
+      }
+
+      // refresh list, then auto-select new item and enable claim
+      await fetchData();
+
+      const key = `${category}||${itemName}`;
+      selected = { category, item:itemName, isClaimed:false };
+      hydrateSelectedFromCache(key);
+      highlightSelectedByKey(key);
+      renderSelectedPanel();
+      scrollToClaim();
+
+      // clear & collapse add row
+      nameInput.value = "";
+      notesInput.value = "";
+      const row = document.getElementById(`addRow-${safeId(category)}`);
+      if(row) row.style.display="none";
+
+    }catch(err){
+      setStatus(addStatus, "Connection failed. Check SCRIPT_URL.", "warn");
+    }
+  }
+
+  // Claim submit
+  claimForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
-    clearStatus(document.getElementById("status"));
-    showLoading(submitBtn);
+    clearStatus(statusEl);
+
+    if(!selected || selected.isClaimed){
+      setStatus(statusEl, "Select an available dish first.", "warn");
+      return;
+    }
 
     const payload = {
-      action: "signup",
+      action:"signup",
       name: document.getElementById("name").value.trim(),
-      category: categorySelect.value,
-      item: itemSelect.value,
+      category: selected.category,
+      item: selected.item,
       quantity: document.getElementById("quantity").value.trim(),
       notes: document.getElementById("notes").value.trim()
     };
 
-    if (!payload.name || !payload.category || !payload.item) {
-      setStatus(document.getElementById("status"), "Please fill name and select a dish.", "warn");
-      hideLoading(submitBtn, "I’ll Bring This!");
+    if(!payload.name){
+      setStatus(statusEl, "Please enter your name.", "warn");
       return;
     }
 
-    try {
+    claimBtn.disabled = true;
+    claimBtn.textContent = "Saving…";
+
+    try{
       const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(payload)
+        method:"POST",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body:new URLSearchParams(payload)
       });
       const json = await res.json();
-      if (json.ok) {
-        setStatus(document.getElementById("status"), "You’re all set! Thank you!", "good");
-        e.target.reset();
+      if(json.ok){
+        setStatus(statusEl, "You’re all set! Thank you 🙌", "good");
+        claimForm.reset();
         await fetchData();
-      } else {
-        setStatus(document.getElementById("status"), json.error || "Something went wrong.", "warn");
+      }else{
+        setStatus(statusEl, json.error || "Something went wrong.", "warn");
       }
-    } catch (err) {
-      setStatus(document.getElementById("status"), "Connection failed. Try again.", "warn");
-    } finally {
-      hideLoading(submitBtn, "I’ll Bring This!");
+    }catch(err){
+      setStatus(statusEl, "Connection failed. Try again.", "warn");
+    }finally{
+      claimBtn.textContent = "I’ll Bring This!";
+      // re-render selection based on latest cache
+      if(selected){
+        const key = `${selected.category}||${selected.item}`;
+        hydrateSelectedFromCache(key);
+        renderSelectedPanel();
+      }
     }
   });
 
-  // Add new item
-  document.getElementById("addItemForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    clearStatus(document.getElementById("addItemStatus"));
-    addItemBtn.disabled = true;
-    addItemBtn.textContent = "Adding...";
+  // Helpers
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[s]));
+  }
+  function safeId(str){
+    return String(str).toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  }
+  function cssEscape(str){
+    // minimal CSS escape for attribute selector use
+    return String(str).replace(/"/g, '\\"');
+  }
 
-    const existingCat = addCategoryExisting.value;
-    const newCat = document.getElementById("addCategoryNew").value.trim();
-    const category = newCat || existingCat;
-    const item = document.getElementById("addItemName").value.trim();
-    const notes = document.getElementById("addItemNotes").value.trim();
-
-    if (!category || !item) {
-      setStatus(document.getElementById("addItemStatus"), "Category and dish name required.", "warn");
-      addItemBtn.disabled = false;
-      addItemBtn.textContent = "Add to List";
-      return;
-    }
-
-    const payload = { action: "addItem", category, item, notes };
-    try {
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(payload)
-      });
-      const json = await res.json();
-      if (json.ok) {
-        setStatus(document.getElementById("addItemStatus"), `"${item}" added!`, "good");
-        e.target.reset();
-        await fetchData();
-        categorySelect.value = category;
-        categorySelect.dispatchEvent(new Event("change"));
-      } else {
-        setStatus(document.getElementById("addItemStatus"), json.error || "Failed to add.", "warn");
-      }
-    } catch (err) {
-      setStatus(document.getElementById("addItemStatus"), "Connection failed.", "warn");
-    } finally {
-      addItemBtn.disabled = false;
-      addItemBtn.textContent = "Add to List";
-    }
-  });
-
-  // Initial load
+  // Boot
   fetchData();
 </script>
+
 </body>
 </html>
