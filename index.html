@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Thanksgiving Potluck Signup</title>
+  <style>
+    :root{
+      --bg:#0f1115;
+      --card:#171a21;
+      --muted:#9aa3b2;
+      --text:#eef1f6;
+      --accent:#ffb454;
+      --accent2:#7bdff2;
+      --good:#5ad67d;
+      --warn:#ff7a7a;
+      --radius:14px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      font-synthesis: style weight;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:radial-gradient(1200px 800px at 10% -10%, #202536 0%, var(--bg) 60%);
+      color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    header{
+      padding:28px 18px 12px; text-align:center;
+    }
+    header h1{margin:0 0 6px; font-size:clamp(1.6rem,3.2vw,2.4rem)}
+    header p{margin:0; color:var(--muted); font-size:clamp(.95rem,2.2vw,1.05rem)}
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 14px 48px; display:grid; gap:14px; grid-template-columns:1.2fr .8fr;}
+    @media (max-width: 900px){ .wrap{grid-template-columns:1fr;} }
+
+    .card{
+      background:linear-gradient(180deg,#191d27 0%, var(--card) 100%);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px; font-size:1.2rem}
+    .muted{color:var(--muted)}
+
+    .category{
+      border-radius:12px;
+      background:rgba(255,255,255,.03);
+      border:1px dashed rgba(255,255,255,.08);
+      padding:10px; margin:10px 0;
+    }
+    .category h3{
+      margin:0 0 8px; font-size:1.05rem; display:flex; align-items:center; gap:8px;
+    }
+    .pill{
+      font-size:.78rem; padding:2px 8px; border-radius:999px;
+      background:rgba(255,180,84,.12); color:var(--accent); border:1px solid rgba(255,180,84,.35);
+    }
+    ul.items{list-style:none; padding:0; margin:0; display:grid; gap:6px;}
+    .item-row{
+      display:grid; grid-template-columns: 18px 1fr auto; align-items:center; gap:8px;
+      padding:7px 8px; border-radius:10px; background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .item-row small{color:var(--muted)}
+    .claimed{
+      font-size:.82rem; color:var(--good); background:rgba(90,214,125,.12);
+      border:1px solid rgba(90,214,125,.35); padding:2px 6px; border-radius:999px;
+      white-space:nowrap;
+    }
+    .unclaimed{
+      font-size:.82rem; color:var(--muted); background:rgba(154,163,178,.08);
+      border:1px solid rgba(154,163,178,.25); padding:2px 6px; border-radius:999px;
+      white-space:nowrap;
+    }
+
+    label{display:block; font-size:.95rem; margin:8px 0 6px;}
+    input, select, textarea, button{
+      width:100%; padding:10px 11px; font-size:1rem;
+      border-radius:10px; border:1px solid rgba(255,255,255,.10);
+      background:#0f1219; color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:70px; resize:vertical}
+    input::placeholder, textarea::placeholder{color:#6f7786}
+
+    .row{display:grid; gap:8px; grid-template-columns:1fr 1fr;}
+    @media (max-width:520px){ .row{grid-template-columns:1fr;} }
+
+    .btn{
+      cursor:pointer; border:none; background:linear-gradient(135deg,var(--accent),#ff8f3b);
+      color:#251600; font-weight:700; margin-top:8px;
+      box-shadow:0 8px 20px rgba(255,180,84,.25);
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{
+      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18);
+      box-shadow:none;
+    }
+
+    .notice{
+      margin-top:10px; padding:9px 10px; border-radius:10px; font-size:.95rem;
+      border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04);
+    }
+    .notice.good{border-color:rgba(90,214,125,.5); color:var(--good)}
+    .notice.warn{border-color:rgba(255,122,122,.5); color:var(--warn)}
+
+    .loading{
+      display:flex; gap:8px; align-items:center; color:var(--muted); font-size:.95rem;
+    }
+    .dot{width:6px; height:6px; border-radius:999px; background:var(--muted); animation:bounce 1.2s infinite ease-in-out;}
+    .dot:nth-child(2){animation-delay:.15s}
+    .dot:nth-child(3){animation-delay:.3s}
+    @keyframes bounce{0%,80%,100%{transform:scale(0.6); opacity:.6}40%{transform:scale(1); opacity:1}}
+
+    footer{max-width:1100px; margin:0 auto; padding:0 14px 40px; color:var(--muted); font-size:.9rem; text-align:center;}
+    a{color:var(--accent2)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🦃 Thanksgiving Potluck Signup</h1>
+    <p>Pick something from the list, or add a new item/category if you’ve got a great idea.</p>
+  </header>
+
+  <main class="wrap">
+    <!-- LEFT: LIVE LIST -->
+    <section class="card">
+      <h2>What’s on the Table</h2>
+      <div id="listArea" class="loading">
+        Loading list
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </section>
+
+    <!-- RIGHT: FORM -->
+    <section class="card">
+      <h2>Sign Up to Bring Something</h2>
+
+      <form id="signupForm">
+        <label>Your name</label>
+        <input id="name" name="name" required placeholder="e.g., Jonathan"/>
+
+        <div class="row">
+          <div>
+            <label>Choose a category</label>
+            <select id="categorySelect" name="categorySelect"></select>
+          </div>
+          <div>
+            <label>Choose an item in that category</label>
+            <select id="itemSelect" name="itemSelect"></select>
+          </div>
+        </div>
+
+        <div class="notice muted" style="margin-top:8px;">
+          If what you want isn’t listed, use the “Add new item” section below.
+        </div>
+
+        <label>Quantity / Serving size (optional)</label>
+        <input id="quantity" name="quantity" placeholder="e.g., feeds 8 / 2 trays / 1 pie"/>
+
+        <label>Notes (optional)</label>
+        <textarea id="notes" name="notes" placeholder="Dietary notes, brand, flavor, etc."></textarea>
+
+        <button class="btn" type="submit">Lock it in 🙌</button>
+        <button class="btn secondary" type="button" id="resetBtn">Clear form</button>
+
+        <div id="status"></div>
+
+        <hr style="margin:14px 0; border:0; height:1px; background:rgba(255,255,255,.08)"/>
+
+        <h3 style="margin:0 0 8px;">Add New Item (Optional)</h3>
+
+        <label>Add to existing category OR create new</label>
+        <div class="row">
+          <select id="addCategoryExisting"></select>
+          <input id="addCategoryNew" placeholder="New category name (if needed)"/>
+        </div>
+
+        <label>New item name</label>
+        <input id="addItemName" placeholder="e.g., mashed potatoes"/>
+
+        <label>New item notes (optional)</label>
+        <input id="addItemNotes" placeholder="e.g., garlic + chives / vegan / spicy"/>
+
+        <button class="btn secondary" type="button" id="addItemBtn">Add item to list</button>
+        <div id="addItemStatus"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    Pro tip: If you add a new item, you can select it immediately after refresh.
+  </footer>
+
+<script>
+  // 1) PASTE YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE:
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8OTuljKtbFlrn67N-2Zr8WZpnSVyTAgJ-tK2pD69oMQZZMVB0O9_nGn8F_GGDVH0o/exec";
+
+  const listArea = document.getElementById('listArea');
+  const categorySelect = document.getElementById('categorySelect');
+  const itemSelect = document.getElementById('itemSelect');
+  const addCategoryExisting = document.getElementById('addCategoryExisting');
+
+  let dataCache = { categories: {}, signups: [] };
+
+  function setStatus(el, msg, kind="muted"){
+    el.innerHTML = `<div class="notice ${kind}">${msg}</div>`;
+  }
+  function clearStatus(el){ el.innerHTML = ""; }
+
+  async function fetchData(){
+    const res = await fetch(`${SCRIPT_URL}?action=list`, { method:"GET" });
+    const json = await res.json();
+    dataCache = json;
+
+    renderList(json);
+    populateCategorySelectors(json);
+  }
+
+  function renderList(json){
+    const { categories, signups } = json;
+
+    if (!categories || Object.keys(categories).length === 0){
+      listArea.innerHTML = `<div class="notice warn">No items found yet. Add one on the right!</div>`;
+      return;
+    }
+
+    // Build claimed lookup: category|item -> array of bringers
+    const claimed = {};
+    (signups || []).forEach(s => {
+      const key = `${s.category}||${s.item}`;
+      claimed[key] = claimed[key] || [];
+      claimed[key].push(s.name + (s.quantity ? ` (${s.quantity})` : ""));
+    });
+
+    let html = "";
+    Object.keys(categories).sort().forEach(cat => {
+      const items = categories[cat] || [];
+      const total = items.length;
+
+      html += `
+        <div class="category">
+          <h3>${cat} <span class="pill">${total} item${total!==1?"s":""}</span></h3>
+          <ul class="items">
+      `;
+
+      items.forEach(it => {
+        const key = `${cat}||${it.name}`;
+        const who = claimed[key] || [];
+        const badge = who.length
+          ? `<span class="claimed">Claimed: ${who.join(", ")}</span>`
+          : `<span class="unclaimed">Unclaimed</span>`;
+
+        html += `
+          <li class="item-row">
+            <input type="radio" disabled />
+            <div>
+              <div><strong>${it.name}</strong></div>
+              ${it.notes ? `<small>${it.notes}</small>` : ``}
+            </div>
+            ${badge}
+          </li>`;
+      });
+
+      html += `</ul></div>`;
+    });
+
+    listArea.innerHTML = html;
+  }
+
+  function populateCategorySelectors(json){
+    const cats = Object.keys(json.categories || {}).sort();
+
+    // Category dropdowns
+    categorySelect.innerHTML = cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+    addCategoryExisting.innerHTML = `<option value="">-- Choose existing --</option>` +
+      cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+
+    // Trigger item dropdown fill
+    updateItemSelect();
+  }
+
+  function updateItemSelect(){
+    const cat = categorySelect.value;
+    const items = (dataCache.categories && dataCache.categories[cat]) || [];
+    itemSelect.innerHTML = items.map(i=>`<option value="${i.name}">${i.name}</option>`).join("");
+
+    if (items.length === 0){
+      itemSelect.innerHTML = `<option value="">(No items yet)</option>`;
+    }
+  }
+
+  categorySelect.addEventListener("change", updateItemSelect);
+
+  // Submit signup
+  document.getElementById("signupForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const status = document.getElementById("status");
+    clearStatus(status);
+
+    const name = document.getElementById("name").value.trim();
+    const category = categorySelect.value;
+    const item = itemSelect.value;
+    const quantity = document.getElementById("quantity").value.trim();
+    const notes = document.getElementById("notes").value.trim();
+
+    if(!name || !category || !item){
+      setStatus(status, "Please enter your name and pick a category + item.", "warn");
+      return;
+    }
+
+    const body = new URLSearchParams({
+      action:"signup",
+      name, category, item, quantity, notes
+    });
+
+    try{
+      setStatus(status, "Saving your signup…", "muted");
+      const res = await fetch(SCRIPT_URL, {
+        method:"POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+        body
+      });
+      const json = await res.json();
+      if(json.ok){
+        setStatus(status, "You’re on the list! 🎉", "good");
+        await fetchData();
+      }else{
+        setStatus(status, json.error || "Something went wrong.", "warn");
+      }
+    }catch(err){
+      setStatus(status, "Could not reach server. Check SCRIPT_URL deployment.", "warn");
+    }
+  });
+
+  // Add new item
+  document.getElementById("addItemBtn").addEventListener("click", async ()=>{
+    const addItemStatus = document.getElementById("addItemStatus");
+    clearStatus(addItemStatus);
+
+    const existing = addCategoryExisting.value.trim();
+    const newCat = document.getElementById("addCategoryNew").value.trim();
+    const itemName = document.getElementById("addItemName").value.trim();
+    const itemNotes = document.getElementById("addItemNotes").value.trim();
+
+    const category = newCat || existing;
+    if(!category){
+      setStatus(addItemStatus, "Pick an existing category or type a new one.", "warn");
+      return;
+    }
+    if(!itemName){
+      setStatus(addItemStatus, "Type a name for the new item.", "warn");
+      return;
+    }
+
+    const body = new URLSearchParams({
+      action:"addItem",
+      category,
+      item: itemName,
+      notes: itemNotes
+    });
+
+    try{
+      setStatus(addItemStatus, "Adding item…", "muted");
+      const res = await fetch(SCRIPT_URL, {
+        method:"POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+        body
+      });
+      const json = await res.json();
+      if(json.ok){
+        setStatus(addItemStatus, `Added "${itemName}" under ${category}. Refreshing list…`, "good");
+
+        // clear add controls
+        document.getElementById("addCategoryNew").value="";
+        document.getElementById("addItemName").value="";
+        document.getElementById("addItemNotes").value="";
+        addCategoryExisting.value="";
+
+        await fetchData();
+
+        // auto-select new category/item
+        categorySelect.value = category;
+        updateItemSelect();
+        itemSelect.value = itemName;
+
+      }else{
+        setStatus(addItemStatus, json.error || "Could not add item.", "warn");
+      }
+    }catch(err){
+      setStatus(addItemStatus, "Could not reach server. Check SCRIPT_URL deployment.", "warn");
+    }
+  });
+
+  // Reset
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    document.getElementById("signupForm").reset();
+    updateItemSelect();
+    clearStatus(document.getElementById("status"));
+    clearStatus(document.getElementById("addItemStatus"));
+  });
+
+  // Boot
+  fetchData();
+</script>
+</body>
+</html>
