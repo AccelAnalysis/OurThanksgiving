@@ -193,7 +193,7 @@
 
 <script>
   // 1) PASTE YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE:
-  const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8OTuljKtbFlrn67N-2Zr8WZpnSVyTAgJ-tK2pD69oMQZZMVB0O9_nGn8F_GGDVH0o/exec";
 
   const listArea = document.getElementById('listArea');
   const categorySelect = document.getElementById('categorySelect');
